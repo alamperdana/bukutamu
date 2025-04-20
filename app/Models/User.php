@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'username',
+        'email',
+        'kode_satker',
+        'password',
+        'last_login',
+        'login_ip',
+        'last_activity',
+        'session_id'
+    ];
+
+    /**
+     * Relasi ke table Satker
+     */
+
+    public function satker()
+    {
+        return $this->belongsTo(Satker::class, 'kode_satker', 'kode_satker');
+    }
+    
+    /**
+     * Fungsi cek user online.
+     */
+    public function isOnline()
+    {
+        return $this->last_activity && $this->last_activity->diffInMinutes(now()) <= 5;
+    }
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'last_activity' => 'datetime',
+    ];
+}
