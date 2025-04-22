@@ -22,19 +22,6 @@
         <div class="col-md-6">
             <x-form.input name="email" value="{{ $data->email }}" label="Email" placeholder="john.doe@mail.com" />
         </div>
-        <div class="col-md-12">
-            <div class="mb-3">
-                <label for="kode_satker" class="form-label">Satuan Kerja</label>
-                <select id="kode_satker" class="select2 form-select" name="kode_satker" placeholder="Silahkan pilih Satker">
-                    <option></option> <!-- Placeholder kosong -->
-                    @foreach ($satkers as $satker)
-                        <option value="{{ $satker->kode_satker }}" @selected(old('kode_satker', $data->kode_satker) == $satker->kode_satker)>
-                            {{ $satker->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
         @if (request()->routeIs('master-data.users.create'))
             <div class="col-md-6">
                 <x-form.input name="password" type="password" value="{{ $data->password }}" label="Password" />

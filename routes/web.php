@@ -9,10 +9,12 @@ use App\Http\Controllers\MasterData\UserController;
 use App\Http\Controllers\Konfigurasi\MenuController;
 use App\Http\Controllers\Konfigurasi\RoleController;
 use App\Http\Controllers\MasterData\TahunController;
-use App\Http\Controllers\Referensi\RefLayananController;
+use App\Http\Controllers\Referensi\LayananController;
 use App\Http\Controllers\Konfigurasi\AksesRoleController;
 use App\Http\Controllers\Konfigurasi\AksesUserController;
 use App\Http\Controllers\Konfigurasi\PermissionController;
+use App\Http\Controllers\Referensi\LokasiLayananController;
+use App\Http\Controllers\Referensi\StatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +58,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::group(['prefix' => 'referensi', 'as' => 'referensi.'], function () {
-        Route::resource('layanan', RefLayananController::class);
+        Route::resource('layanan', LayananController::class);
+        Route::resource('lokasi', LokasiLayananController::class);
+        Route::resource('status', StatusController::class);
     });
 });
 

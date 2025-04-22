@@ -52,10 +52,9 @@ class LoginRequest extends FormRequest
         $user->session_id = Session::getId();
         $user->save();
     
-        // Simpan tahun dan kode satker ke session Laravel
+        // Simpan tahun ke session Laravel
         session([
             'tahun' => $this->input('tahun'),
-            'kode_satker' => $user->kode_satker,
         ]);
     
         RateLimiter::clear($this->throttleKey());

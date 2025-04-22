@@ -26,7 +26,6 @@ class UserRequest extends FormRequest
             'name' => 'required',
             'username' => ['required', Rule::unique('users')->ignore($this->user)],
             'email' => ['required', Rule::unique('users')->ignore($this->user)],
-            'kode_satker' => 'required',
             'password' => [Rule::requiredIf(function() {
                 return request()->routeIs('master-data.users.store');
             }), 'confirmed'],
@@ -45,7 +44,6 @@ class UserRequest extends FormRequest
             'username.unique'  => 'Username sudah digunakan.',
             'email.required'  => 'Email wajib diisi.',
             'email.unique'  => 'Email sudah digunakan.',
-            'kode_satker.required'  => 'Satuan Kerja wajib diisi.',
             'password.requiredIf'  => 'Password wajib diisi.',
             'password.confirmed'  => 'Konfirmasi Password tidak sama.',
             'roles.required' => 'Minimal satu role harus dipilih.',

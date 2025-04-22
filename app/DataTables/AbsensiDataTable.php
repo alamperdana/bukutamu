@@ -1,9 +1,8 @@
 <?php
 
-namespace App\DataTables\Referensi;
+namespace App\DataTables;
 
-use App\Models\Referensi\RefLayanan;
-use App\Traits\DatatableHelper;
+use App\Models\Absensi;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -13,9 +12,8 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class RefLayananDataTable extends DataTable
+class AbsensiDataTable extends DataTable
 {
-    use datatableHelper;
     /**
      * Build the DataTable class.
      *
@@ -24,17 +22,14 @@ class RefLayananDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', function ($row) {
-                $actions = $this->basicActions($row);
-                return view('action', compact('actions'));
-            })
-            ->addIndexColumn();
+            ->addColumn('action', 'absensi.action')
+            ->setRowId('id');
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(RefLayanan $model): QueryBuilder
+    public function query(Absensi $model): QueryBuilder
     {
         return $model->newQuery();
     }
@@ -45,18 +40,19 @@ class RefLayananDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('reflayanan-table')
+                    ->setTableId('absensi-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
-                    ->orderBy(0, 'asc')
-                    ->parameters([
-                        'scrollY' => '300px',
-                        'scrollX' => true, // Scroll Y dengan ketinggian tertentu
-                        'scrollCollapse' => false, // Aktifkan collapsible scrolling
-                        'paging' => true,
-                        // 'initComplete' => "function() {
-                        //     $('thead th').addClass('text-center');
-                        // }"
+                    //->dom('Bfrtip')
+                    ->orderBy(1)
+                    ->selectStyleSingle()
+                    ->buttons([
+                        Button::make('excel'),
+                        Button::make('csv'),
+                        Button::make('pdf'),
+                        Button::make('print'),
+                        Button::make('reset'),
+                        Button::make('reload')
                     ]);
     }
 
@@ -66,13 +62,15 @@ class RefLayananDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('DT_RowIndex')->title('No')->searchable(false)->orderable(false)->addClass('text-center')->width(30),
-            Column::make('layanan')->title('Layanan'),
             Column::computed('action')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
+            Column::make('id'),
+            Column::make('add your columns'),
+            Column::make('created_at'),
+            Column::make('updated_at'),
         ];
     }
 
@@ -81,6 +79,6 @@ class RefLayananDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'RefLayanan_' . date('YmdHis');
+        return 'Absensi_' . date('YmdHis');
     }
 }

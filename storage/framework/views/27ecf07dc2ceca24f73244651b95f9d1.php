@@ -7,16 +7,16 @@
 <?php $__env->startSection('content'); ?>
     <!-- Content -->
     <div class="main-content container-xxl flex-grow-1 container-p-y">
-        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Referensi /</span> Jenis Layanan</h4>
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Referensi /</span> Status Pelayanan</h4>
 
         <!-- Ajax Sourced Server-side -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="m-0">Daftar Layanan</h5>
+                <h5 class="m-0">Daftar Status Pelayanan</h5>
                 <div class="d-flex gap-1" style="width: 60%;">
-                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create referensi/layanan')): ?>
-                        <a class="btn btn-primary action" href="<?php echo e(route('referensi.layanan.create')); ?>">
-                            <span class="tf-icons ti-xs ti ti-plus me-2"></span>Tambah Layanan
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create referensi/status')): ?>
+                        <a class="btn btn-primary action" href="<?php echo e(route('referensi.status.create')); ?>">
+                            <span class="tf-icons ti-xs ti ti-plus me-2"></span>Tambah Status
                         </a>
                     <?php endif; ?>
                 </div>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 40%;">
-                    <img src="<?php echo e(asset('assets/img/cartoon/layanan.png')); ?>" class="img-fluid" alt="Gambar Pendamping" style="max-height: 300px;" />
+                    <img src="<?php echo e(asset('assets/img/cartoon/checklist1.png')); ?>" class="img-fluid" alt="Gambar Pendamping" style="max-height: 300px;" />
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
 
 
     <script>
-        const datatable = 'reflayanan-table'
+        const datatable = 'status-table'
 
         handleAction(datatable, function(res) {
             select2Init()
@@ -56,4 +56,4 @@
     </script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.app', ['title' => 'Daftar Pejabat'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/bukutamu/resources/views/pages/referensi/layanan.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', ['title' => 'Status Pelayanan'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/bukutamu/resources/views/pages/referensi/status.blade.php ENDPATH**/ ?>

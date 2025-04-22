@@ -5,9 +5,6 @@ namespace App\Http\Controllers\MasterData;
 use Carbon\Carbon;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Satker;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\DataTables\MasterData\UserDataTable;
 use App\Http\Requests\MasterData\UserRequest;
@@ -31,7 +28,6 @@ class UserController extends Controller
             'data' => new User(),
             'action' => route('master-data.users.store'),
             'roles' => Role::get()->pluck('name', 'name'),
-            'satkers' => Satker::all('kode_satker', 'name')
         ]);
     }
 
@@ -40,10 +36,7 @@ class UserController extends Controller
      */
     public function store(UserRequest $request, User $user)
     {
-        $kode_satker = explode(' - ', $request->kode_satker)[0];
-
         $user->fill($request->only(['email', 'name', 'username']));
-        $user->kode_satker = $kode_satker;
         $user->password = bcrypt($request->password);
 
         $user->markEmailAsVerified();
@@ -67,7 +60,6 @@ class UserController extends Controller
             'last_login' => $lastLoginHumanReadable,
             'isReadonly' => true,
             'roles' => Role::get()->pluck('name', 'name'),
-            'satkers' => Satker::all('kode_satker', 'name')
         ]);
     }
 
@@ -80,7 +72,6 @@ class UserController extends Controller
             'data' => $user,
             'action' => route('master-data.users.update', $user->id),
             'roles' => Role::get()->pluck('name', 'name'),
-            'satkers' => Satker::all('kode_satker', 'name')
         ]);
     }
 
@@ -89,10 +80,7 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user)
     {
-        $kode_satker = explode(' - ', $request->kode_satker)[0];
-
         $user->fill($request->only(['email', 'name', 'username']));
-        $user->kode_satker = $kode_satker;
 
         if ($request->filled('password')) {
             $user->password = bcrypt($request->password);

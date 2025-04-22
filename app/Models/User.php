@@ -24,22 +24,12 @@ class User extends Authenticatable
         'name',
         'username',
         'email',
-        'kode_satker',
         'password',
         'last_login',
         'login_ip',
         'last_activity',
         'session_id'
     ];
-
-    /**
-     * Relasi ke table Satker
-     */
-
-    public function satker()
-    {
-        return $this->belongsTo(Satker::class, 'kode_satker', 'kode_satker');
-    }
     
     /**
      * Fungsi cek user online.

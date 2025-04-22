@@ -5,7 +5,7 @@ namespace App\Models\Referensi;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RefLayanan extends Model
+class Layanan extends Model
 {
     use HasFactory;
 
