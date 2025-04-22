@@ -30,9 +30,6 @@ class UserDataTable extends DataTable
                 $roles = $row->getRoleNames();
                 return $row->name . $this->getRoleBadge($row->getRoleNames(), $row->isOnline());
             })
-            ->addColumn('kode_satker', function($row) {
-                return $row->satker ? $row->satker->name : '-';
-            })
             ->addColumn('action', function ($row) {
                 $actions = $this->basicActions($row);
                 return view('action', compact('actions'));
@@ -96,7 +93,6 @@ class UserDataTable extends DataTable
             Column::make('name')->title('Name & Role')->orderable(false)->width(60),
             Column::make('username'),
             Column::make('email'),
-            Column::make('kode_satker')->title('Satuan Kerja'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
