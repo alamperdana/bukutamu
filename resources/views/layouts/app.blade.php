@@ -54,54 +54,22 @@
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
 
-    <style>
-        body.no-navbar .layout-container,
-        body.no-navbar .layout-page,
-        body.no-navbar .content-wrapper {
-            width: 100% !important;
-            margin-left: 0 !important;
-            padding: 0 !important;
-        }
-    
-        body.no-navbar .layout-page {
-            padding-top: 4 !important;
-        }
-    
-        body.no-navbar .content-wrapper {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-    
-        body.no-navbar .layout-navbar,
-        body.no-navbar .content-backdrop {
-            display: none !important;
-        }
-    
-        html.no-navbar.layout-navbar-fixed body {
-            padding-top: 0 !important;
-        }
-    </style>
-       
 </head>
 
-<body class="{{ isset($hideMenuNavbar) && $hideMenuNavbar ? 'no-navbar' : '' }}">
+<body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
 
             <!-- Menu -->
-            @empty($hideMenuNavbar)
-                @include('layouts.menu')   
-            @endempty
+            @include('layouts.menu')
             <!-- / Menu -->
 
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
 
-                @empty($hideMenuNavbar)
-                    @include('layouts.navbar')
-                @endempty
+                @include('layouts.navbar')
 
                 <!-- / Navbar -->
 
@@ -163,7 +131,7 @@ ma            <div class="lds-ellipsis">
     @stack('jsLibrary')
 
     <!-- Main JS -->
-    {{-- <script src="{{ asset('assets/js/main.min.js') }}"></script> --}}
+    <script src="{{ asset('assets/js/main.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
@@ -173,7 +141,7 @@ ma            <div class="lds-ellipsis">
     @stack('js');
 
     <!-- SweetAlert scripts -->
-    {{-- @include('sweetalert::alert') --}}
+    @include('sweetalert::alert')
 
 </body>
 
