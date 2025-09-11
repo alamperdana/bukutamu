@@ -1,0 +1,79 @@
+name: Deploy (main -> production)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Siapkan known_hosts + SSH config (port custom)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          HOST="${{ secrets.SERVER_HOST }}"
+          PORT="${{ secrets.SERVER_PORT }}"
+
+          # Ambil host key untuk port non-standar, lalu ubah host jadi "[host]:port"
+          ssh-keyscan -p "$PORT" "$HOST" 2>/dev/null \
+            | sed -e "s/^$HOST/[${HOST}]:${PORT}/" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          # Buat alias "prod" agar cukup 'ssh prod'
+          cat > ~/.ssh/config <<CFG
+          Host prod
+            HostName ${{ secrets.SERVER_HOST }}
+            User ${{ secrets.SERVER_USER }}
+            Port ${{ secrets.SERVER_PORT }}
+            StrictHostKeyChecking yes
+            IdentitiesOnly yes
+          CFG
+          chmod 600 ~/.ssh/config
+
+      - name: Start SSH agent & tambahkan private key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Remote deploy via SSH
+        env:
+          APP_DIR: ${{ secrets.SERVER_PATH }}
+          RELOAD_CMDS: ${{ secrets.RELOAD_CMDS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh prod bash <<'EOF'
+          set -euo pipefail
+          cd "$APP_DIR"
+
+          # Pastikan repo sudah pernah di-clone sekali sebelumnya ke $APP_DIR
+          git config --global --add safe.directory "$APP_DIR" || true
+          git fetch --all
+          git reset --hard origin/main
+          git submodule update --init --recursive
+
+          # ==== Build/opsional (sesuaikan stack kamu) ====
+          # Node:
+          # [ -f package.json ] && npm ci && npm run build
+          # PHP (Composer/Laravel):
+          # [ -f composer.json ] && composer install --no-dev --prefer-dist --no-interaction
+          # [ -f artisan ] && php artisan migrate --force || true
+          # Python:
+          # [ -f requirements.txt ] && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
+          # Static/Frontend:
+          # rsync -a --delete dist/ /var/www/html/
+
+          # Reload/restart service kalau perlu:
+          if [ -n "${RELOAD_CMDS:-}" ]; then
+            eval "$RELOAD_CMDS" || true
+          fi
+          EOF
