@@ -3,18 +3,19 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterData\UserController;
 use App\Http\Controllers\Konfigurasi\MenuController;
 use App\Http\Controllers\Konfigurasi\RoleController;
 use App\Http\Controllers\MasterData\TahunController;
+use App\Http\Controllers\Referensi\StatusController;
 use App\Http\Controllers\Referensi\LayananController;
 use App\Http\Controllers\Konfigurasi\AksesRoleController;
 use App\Http\Controllers\Konfigurasi\AksesUserController;
 use App\Http\Controllers\Konfigurasi\PermissionController;
 use App\Http\Controllers\Referensi\LokasiLayananController;
-use App\Http\Controllers\Referensi\StatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +28,14 @@ use App\Http\Controllers\Referensi\StatusController;
 |
 */
 
-Route::match(['GET', 'HEAD'], '/', function () {
-    return 'INI ROUTE / BERHASIL!';
-})->name('home');
+// Route::match(['GET', 'HEAD'], '/', function () {
+//     return 'INI ROUTE / BERHASIL!';
+// })->name('home');
+
+Route::resource('absensi', AbsensiController::class);
+
+// Route::get('/', [AbsensiController::class, 'create'])->name('absensi.create');
+// Route::post('/', [AbsensiController::class, 'store'])->name('absensi.store');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('Dashboard');
 

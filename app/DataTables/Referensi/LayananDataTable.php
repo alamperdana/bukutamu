@@ -12,7 +12,7 @@ use Yajra\DataTables\Services\DataTable;
 
 class LayananDataTable extends DataTable
 {
-    use datatableHelper;
+    use DatatableHelper;
     /**
      * Build the DataTable class.
      *

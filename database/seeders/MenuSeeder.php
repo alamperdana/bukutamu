@@ -36,12 +36,22 @@ class MenuSeeder extends Seeder
         $sm = $mm->subMenus()->create(['name' => 'Akses By User', 'url' => $mm->url . '/akses-user', 'category' => $mm->category]);
         $this->attachMenuPermission($sm, ['read', 'update'], null);
 
-        $mm = Menu::firstOrCreate(['url' => 'master-data'], ['name' => 'Master Data', 'category' => 'MASTER DATA', 'icon' => 'books']);
+        $mm = Menu::firstOrCreate(['url' => 'master-data'], ['name' => 'Master Data', 'category' => 'MASTER DATA', 'icon' => 'brand-databricks']);
         $this->attachMenuPermission($mm, ['read'], null);
 
         $sm = $mm->subMenus()->create(['name' => 'User', 'url' => $mm->url . '/users', 'category' => $mm->category]);
         $this->attachMenuPermission($sm, null, null);
         $sm = $mm->subMenus()->create(['name' => 'Tahun Anggaran', 'url' => $mm->url . '/tahun', 'category' => $mm->category]);
+        $this->attachMenuPermission($sm, null, null);
+
+        $mm = Menu::firstOrCreate(['url' => 'referensi'], ['name' => 'Referensi', 'category' => 'MASTER DATA', 'icon' => 'books']);
+        $this->attachMenuPermission($mm, ['read'], null);
+
+        $sm = $mm->subMenus()->create(['name' => 'Jenis Layanan', 'url' => $mm->url . '/layanan', 'category' => $mm->category]);
+        $this->attachMenuPermission($sm, null, null);
+        $sm = $mm->subMenus()->create(['name' => 'Lokasi Pelayanan', 'url' => $mm->url . '/lokasi', 'category' => $mm->category]);
+        $this->attachMenuPermission($sm, null, null);
+        $sm = $mm->subMenus()->create(['name' => 'Status Layanan', 'url' => $mm->url . '/status', 'category' => $mm->category]);
         $this->attachMenuPermission($sm, null, null);
     }
 }

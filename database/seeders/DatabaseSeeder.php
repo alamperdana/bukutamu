@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class, // Referensi
             MenuSeeder::class, // Referensi
             TahunSeeder::class, // Referensi
+            LayananSeeder::class, // Referensi
+            LokasiLayananSeeder::class, // Referensi
+            StatusSeeder::class, // Referensi
             RoleHasPermissionSeeder::class,
         ]);
     }

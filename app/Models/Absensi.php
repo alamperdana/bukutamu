@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Referensi\Status;
+use App\Models\Referensi\Layanan;
+use App\Models\Referensi\LokasiLayanan;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Absensi extends Model
 {
@@ -17,11 +20,32 @@ class Absensi extends Model
         'nama',
         'no_telp',
         'layanan_id',
-        'lainnya',
+        'catatan',
         'photo_path',
         'latitude',
         'longitude',
-        'tanggal',
-        'jam_pelayanan'
-    ];    
+        'ip_address',
+        'status_id',
+        'keterangan'
+    ];
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo_path ? asset('storage/' . $this->photo_path) : null;
+    }
+
+    public function Lokasi() 
+    {
+        return $this->belongsTo(LokasiLayanan::class);
+    }
+
+    public function Layanan() 
+    {
+        return $this->belongsTo(Layanan::class);
+    }
+
+    public function Status() 
+    {
+        return $this->belongsTo(Status::class);
+    }
 }

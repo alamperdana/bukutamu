@@ -221,21 +221,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     wizardValidationSubmit.disabled = false;
                     wizardValidationSubmit.innerHTML = "Submit";
 
-                    const errors = err.responseJSON?.errors;
-                    if (errors) {
-                        $(".invalid-feedback").remove();
-                        $(".is-invalid").removeClass("is-invalid");
+                            const errors = err.responseJSON?.errors;
+                            if (errors) {
+                                $(".invalid-feedback").remove();
+                                $(".is-invalid").removeClass("is-invalid");
 
-                        for (let [key, message] of Object.entries(errors)) {
-                            let inputField = $(`[name=${key}]`);
-                            inputField
-                                .addClass("is-invalid")
-                                .parent()
-                                .append(
-                                    `<div class="invalid-feedback">${message}</div>`
-                                );
-                        }
-                    }
+                                for (let [key, message] of Object.entries(errors)) {
+                                    let inputField = $(`[name=${key}]`);
+                                    inputField
+                                        .addClass("is-invalid")
+                                        .parent()
+                                        .append(
+                                            `<div class="invalid-feedback">${message}</div>`
+                                        );
+                                }
+                            }
                 },
             });
         }
