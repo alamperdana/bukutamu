@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>" class="light-style layout-navbar-fixed layout-menu-fixed"
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>" class="light-style <?php if(auth()->guard()->check()): ?> layout-navbar-fixed layout-menu-fixed <?php endif; ?>"
     dir="ltr" data-theme="theme-default" data-assets-path="<?php echo e(asset('assets/')); ?>">
 
 <head>
@@ -49,6 +49,24 @@
 
     <!-- Page-Specific CSS -->
     <?php echo $__env->yieldPushContent('css'); ?>
+    <style>
+        /* Sembunyikan menu & navbar saat guest */
+        .no-menu .layout-menu,
+        .no-navbar .layout-navbar { display: none !important; }
+
+        /* Lebarkan area konten saat guest */
+        .no-menu .layout-page { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; }
+        .no-menu .content-wrapper { margin-left: 0 !important; }
+        .no-navbar .layout-page { padding-top: 0 !important; }
+        .no-navbar .content-wrapper { padding-top: 0 !important; width: 100% !important; }
+
+        /* Jika template Anda biasa memakai container-xxl,
+            hilangkan batasan max-width saat guest */
+        .no-navbar .content-wrapper .container-xxl {
+            max-width: none !important;
+            width: 100% !important;
+        }
+    </style>
 
     <!-- Helpers -->
     <script src="<?php echo e(asset('assets/vendor/js/helpers.js')); ?>"></script>
@@ -58,18 +76,21 @@
 
 <body>
     <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-        <div class="layout-container">
+    <div class="layout-wrapper <?php if(auth()->guard()->check()): ?> layout-content-navbar <?php endif; ?>">
+        <div class="layout-container <?php if(auth()->guard()->guest()): ?> no-menu <?php endif; ?>">
 
             <!-- Menu -->
-            <?php echo $__env->make('layouts.menu', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <?php if(auth()->guard()->check()): ?>
+                <?php echo $__env->make('layouts.menu', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <?php endif; ?>
             <!-- / Menu -->
 
             <!-- Layout container -->
-            <div class="layout-page">
+            <div class="layout-page <?php if(auth()->guard()->guest()): ?> no-navbar <?php endif; ?>">
                 <!-- Navbar -->
-
-                <?php echo $__env->make('layouts.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                <?php if(auth()->guard()->check()): ?>
+                    <?php echo $__env->make('layouts.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                <?php endif; ?>
 
                 <!-- / Navbar -->
 
@@ -97,7 +118,7 @@
 
         <!-- preloader -->
         <div class="preloader" style="visibility:hidden;">
-ma            <div class="lds-ellipsis">
+            <div class="lds-ellipsis">
                 <div></div><div></div><div></div><div></div>
             </div>
         </div>
@@ -138,11 +159,12 @@ ma            <div class="lds-ellipsis">
     <script src="<?php echo e(asset('assets/js/tables-datatables-extensions.js')); ?>"></script>
 
     <!-- Stack for custom JavaScript per page -->
-    <?php echo $__env->yieldPushContent('js'); ?>;
+    <?php echo $__env->yieldPushContent('js'); ?>
 
     <!-- SweetAlert scripts -->
     <?php echo $__env->make('sweetalert::alert', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 </body>
 
-</html><?php /**PATH /Users/perdana/Work/LaravelApp/bukutamu/resources/views/layouts/app.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH /Users/perdana/Work/LaravelApp/bukutamu/resources/views/layouts/app.blade.php ENDPATH**/ ?>

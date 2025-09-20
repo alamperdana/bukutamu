@@ -14,7 +14,7 @@
 <!-- endbuild -->
 
 <!-- Stack for JavaScript Libraries -->
-@stack('jsLibrary');
+@stack('jsLibrary')
 
 <!-- Vendors JS -->
 <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
@@ -204,5 +204,5 @@
 <script src="{{ asset('assets/js/tables-datatables-advanced.js') }}"></script>
 
 <!-- Stack for custom JavaScript per page -->
-@stack('js');
+@stack('js')
 

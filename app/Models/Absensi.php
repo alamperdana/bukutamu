@@ -21,17 +21,18 @@ class Absensi extends Model
         'no_telp',
         'layanan_id',
         'catatan',
-        'photo_path',
+        'id_path',
         'latitude',
         'longitude',
         'ip_address',
         'status_id',
+        'photo_path',
         'keterangan'
     ];
 
-    public function getPhotoUrlAttribute()
+    public function getIdUrlAttribute()
     {
-        return $this->photo_path ? asset('storage/' . $this->photo_path) : null;
+        return $this->id_path ? asset('storage/' . $this->id_path) : null;
     }
 
     public function Lokasi() 

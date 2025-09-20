@@ -20,11 +20,12 @@ return new class extends Migration
             $table->string('no_telp');
             $table->foreignId('layanan_id')->constrained('ref_layanan')->onDelete('cascade');
             $table->string('catatan')->nullable();
-            $table->string('photo_path');
+            $table->string('id_path');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->string('ip_address')->nullable();
             $table->foreignId('status_id')->constrained('ref_status')->onDelete('cascade')->default(1);
+            $table->string('photo_path');
             $table->string('keterangan')->nullable();
             $table->timestamps();
         });

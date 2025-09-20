@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light-style layout-navbar-fixed layout-menu-fixed"
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light-style @auth layout-navbar-fixed layout-menu-fixed @endauth"
     dir="ltr" data-theme="theme-default" data-assets-path="{{ asset('assets/') }}">
 
 <head>
@@ -49,6 +49,24 @@
 
     <!-- Page-Specific CSS -->
     @stack('css')
+    <style>
+        /* Sembunyikan menu & navbar saat guest */
+        .no-menu .layout-menu,
+        .no-navbar .layout-navbar { display: none !important; }
+
+        /* Lebarkan area konten saat guest */
+        .no-menu .layout-page { margin-left: 0 !important; padding-left: 0 !important; width: 100% !important; }
+        .no-menu .content-wrapper { margin-left: 0 !important; }
+        .no-navbar .layout-page { padding-top: 0 !important; }
+        .no-navbar .content-wrapper { padding-top: 0 !important; width: 100% !important; }
+
+        /* Jika template Anda biasa memakai container-xxl,
+            hilangkan batasan max-width saat guest */
+        .no-navbar .content-wrapper .container-xxl {
+            max-width: none !important;
+            width: 100% !important;
+        }
+    </style>
 
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
@@ -58,18 +76,21 @@
 
 <body>
     <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-        <div class="layout-container">
+    <div class="layout-wrapper @auth layout-content-navbar @endauth">
+        <div class="layout-container @guest no-menu @endguest">
 
             <!-- Menu -->
-            @include('layouts.menu')
+            @auth
+                @include('layouts.menu')
+            @endauth
             <!-- / Menu -->
 
             <!-- Layout container -->
-            <div class="layout-page">
+            <div class="layout-page @guest no-navbar @endguest">
                 <!-- Navbar -->
-
-                @include('layouts.navbar')
+                @auth
+                    @include('layouts.navbar')
+                @endauth
 
                 <!-- / Navbar -->
 
@@ -97,7 +118,7 @@
 
         <!-- preloader -->
         <div class="preloader" style="visibility:hidden;">
-ma            <div class="lds-ellipsis">
+            <div class="lds-ellipsis">
                 <div></div><div></div><div></div><div></div>
             </div>
         </div>
@@ -138,7 +159,7 @@ ma            <div class="lds-ellipsis">
     <script src="{{ asset('assets/js/tables-datatables-extensions.js') }}"></script>
 
     <!-- Stack for custom JavaScript per page -->
-    @stack('js');
+    @stack('js')
 
     <!-- SweetAlert scripts -->
     @include('sweetalert::alert')

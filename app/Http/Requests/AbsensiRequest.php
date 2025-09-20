@@ -29,7 +29,7 @@ class AbsensiRequest extends FormRequest
             'no_telp' => 'required|numeric|digits_between:10,15',
             'layanan_id' => 'required',
             'catatan' => 'nullable|string|max:255',
-            'photo_path' => 'nullable|string',
+            'id_path' => 'required|string',
         ];
     }
 
@@ -43,15 +43,15 @@ class AbsensiRequest extends FormRequest
         return [
             'lokasi_layanan_id.required' => 'Lokasi Layanan wajib diisi.',
             'lokasi_layanan_id.exists' => 'Lokasi Layanan tidak valid.',
-            'asal.required' => 'Asal wajib diisi.',
-            'asal.string' => 'Asal harus berupa teks.',
-            'asal.max' => 'Asal tidak boleh lebih dari 255 karakter.',
+            'asal.required' => 'Asal/Instansi wajib diisi.',
+            'asal.string' => 'Asal/Instansi harus berupa teks.',
+            'asal.max' => 'Asal/Instansi tidak boleh lebih dari 255 karakter.',
             'jabatan.required' => 'Jabatan wajib diisi.',
             'jabatan.string' => 'Jabatan harus berupa teks.',
             'jabatan.max' => 'Jabatan tidak boleh lebih dari 255 karakter.',
-            'nama.required' => 'Nama wajib diisi.',
-            'nama.string' => 'Nama harus berupa teks.',
-            'nama.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'nama.required' => 'Nama Lengkap wajib diisi.',
+            'nama.string' => 'Nama Lengkap harus berupa teks.',
+            'nama.max' => 'Nama Lengkap tidak boleh lebih dari 255 karakter.',
             'no_telp.required' => 'Nomor Telepon wajib diisi.',
             'no_telp.numeric' => 'Nomor Telepon harus berupa angka.',
             'no_telp.digits_between' => 'Nomor Telepon antara 10 hingga 15 digit.',
@@ -59,7 +59,7 @@ class AbsensiRequest extends FormRequest
             'layanan_id.exists' => 'Layanan tidak valid.',
             'catatan.string' => 'Catatan harus berupa teks.',
             'catatan.max' => 'Catatan tidak boleh lebih dari 255 karakter.',
-            'photo_path.string' => 'Foto harus berupa string.',
+            'id_path.string' => 'Foto harus berupa string.',
         ];
     }
 }

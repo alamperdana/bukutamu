@@ -32,6 +32,10 @@ use App\Http\Controllers\Referensi\LokasiLayananController;
 //     return 'INI ROUTE / BERHASIL!';
 // })->name('home');
 
+Route::get('/', function () {
+    return view('welcome'); // Ini akan menampilkan tampilan 'welcome'
+});
+
 Route::resource('absensi', AbsensiController::class);
 
 // Route::get('/', [AbsensiController::class, 'create'])->name('absensi.create');

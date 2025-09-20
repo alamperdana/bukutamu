@@ -1,4 +1,3 @@
-@php($hideMenuNavbar = true)
 @extends('layouts.app', ['title' => 'Buku Tamu Layanan'])
 @push('cssLibrary')
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.css') }}" />
@@ -9,7 +8,8 @@
     <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
 @endpush
 @section('content')
-    <div class="main-content container-xxl flex-grow-1 container-p-y">
+    <div class="main-content @auth container-xxl @else container-fluid @endauth flex-grow-1 container-p-y">
+        {{-- <div class="main-content container-xxl flex-grow-1 container-p-y"> --}}
         {{-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Layanan /</span> Buku Tamu</h4> --}}
         <div class="card">
             <div class="d-flex justify-content-between align-items-center">
@@ -68,22 +68,34 @@
                                 label="Catatan Tambahan" placeholder="Silahkan isi Jenis Layanan Catatan Tambahan" />
                         </div>
                         <div class="mb-3 col-md-12">
-                            <label for="photo" class="form-label">Foto Kunjungan</label>
+                            <label for="photo" class="form-label">Foto Identitas</label>
                             <div class="d-flex flex-column align-items-center">
-                                <video id="video" autoplay playsinline
-                                    style="width: 100%; max-width: 400px; border: 1px solid #ccc;"></video>
-                                <canvas id="canvas" style="display: none;"></canvas>
-                                <img id="photoPreview" src="" alt="Preview Foto"
-                                    style="width: 100%; max-width: 400px; margin-top: 10px; display: none; border: 1px solid #ccc;" />
-                                <button type="button" id="captureButton" class="btn btn-primary mt-2">Ambil Foto</button>
+                                <div class="camera-container" style="position: relative; width: 100%; max-width: 480px;">
+                                    <video id="video" autoplay playsinline
+                                        style="width: 100%; border-radius: 16px; background:#000;"></video>
+                                    <img id="idPreview" class="camera-still" src="" alt="Preview Foto" />
+                                    <canvas id="canvas" style="display: none;"></canvas>
+                                    <div class="id-guide-overlay" aria-hidden="true">
+                                        <div class="id-guide-text">Sesuaikan KTP Anda dengan bingkai dan pastikan terlihat
+                                            jelas</div>
+                                    </div>
+                                </div>
+                                <button type="button" id="switchCamera" class="btn btn-outline-secondary btn-action">
+                                    <i class="ti ti-camera-rotate"></i>
+                                    <span class="ms-1">Balik kamera</span>
+                                </button>
+                                <hr class="w-100 my-4" />
+                                <button type="button" id="captureButton" class="btn btn-capture btn-action mt-0">
+                                    Ambil Foto
+                                </button>
                             </div>
-                            <input type="hidden" id="photoInput" name="photo_path" />
+                            <input type="hidden" id="idInput" name="id_path" />
                         </div>
                         <input type="hidden" id="latitude" name="latitude" />
                         <input type="hidden" id="longitude" name="longitude" />
                     </div>
                     <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-success btn-submit">Simpan</button>
+                        <button type="submit" class="btn btn-success btn-submit btn-action">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -92,6 +104,104 @@
     </div>
 @endsection
 
+@push('css')
+    <style>
+        /* Preview container */
+        .camera-container {
+            margin-bottom: 18px;
+        }
+
+        .camera-container video {
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .camera-still {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+            display: none;
+        }
+
+        /* Overlay garis bantu untuk KTP (perkiraan rasio kartu 1.58:1) */
+        .id-guide-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 16px;
+            z-index: 3;
+        }
+
+        /* Corner guides */
+        .id-guide-overlay::before,
+        .id-guide-overlay::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 86%;
+            height: 75%;
+        }
+
+        .id-guide-overlay::before {
+            border-radius: 12px;
+            box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.18) inset;
+            /* gelapkan area luar */
+        }
+
+        .id-guide-overlay::after {
+            border-radius: 12px;
+            background:
+                linear-gradient(90deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) top left / 34% 3px no-repeat,
+                linear-gradient(180deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) top left / 3px 34% no-repeat,
+                linear-gradient(270deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) top right / 34% 3px no-repeat,
+                linear-gradient(180deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) top right / 3px 34% no-repeat,
+                linear-gradient(90deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) bottom left / 34% 3px no-repeat,
+                linear-gradient(0deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) bottom left / 3px 34% no-repeat,
+                linear-gradient(270deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) bottom right / 34% 3px no-repeat,
+                linear-gradient(0deg, rgba(255, 255, 255, 0.9) 22px, transparent 0) bottom right / 3px 34% no-repeat;
+        }
+
+        .id-guide-text {
+            position: absolute;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            padding: 0 16px;
+            line-height: 1.2;
+        }
+
+        /* Gradient capture button */
+        .btn-capture {
+            color: #fff;
+            background: linear-gradient(90deg, #ff3d3d, #ff1e56);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(255, 30, 86, 0.3);
+        }
+
+        .btn-capture:hover {
+            filter: brightness(0.98);
+            color: #fff;
+        }
+
+        /* Samakan ukuran kedua tombol */
+        .btn-action {
+            width: clamp(220px, 60%, 120px);
+        }
+    </style>
+@endpush
 @push('js')
     <script src="{{ asset('assets/js/absensiForm.js') }}"></script>
     <script>
@@ -101,7 +211,7 @@
             },
         });
 
-        // Menangkap event perubahan pada dropdown Select2 untuk 'layanan_id'
+        // // Menangkap event perubahan pada dropdown Select2 untuk 'layanan_id'
         // $('#layanan_id').on('change', function() {
         //     const selectedLayananId = $(this).val();  // Mendapatkan nilai yang dipilih pada Select2
         //     console.log("Pilihan Layanan ID:", selectedLayananId);  // Menampilkan pilihan ID di console
@@ -132,14 +242,14 @@
             submitButton.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: _form.action,        
-                method: _form.method,     
-                data: formData,           
-                contentType: false,       
-                processData: false,       
+                url: _form.action,
+                method: _form.method,
+                data: formData,
+                contentType: false,
+                processData: false,
                 success: function(res) {
                     // Redirect setelah sukses
-                    window.location.href = "/bukutamu/absensi";
+                    window.location.href = "/absensi";
                 },
                 error: function(err) {
                     // Menghapus pesan kesalahan sebelumnya
@@ -151,14 +261,14 @@
                         for (let [key, message] of Object.entries(err.responseJSON.errors)) {
                             let inputField = $(`[name=${key}]`);
                             inputField
-                                .addClass("is-invalid")     
+                                .addClass("is-invalid")
                                 .parent()
                                 .append(
-                                    `<div class="invalid-feedback">${message}</div>` 
+                                    `<div class="invalid-feedback">${message}</div>`
                                 );
                         }
                     } else {
-                        console.error(err); 
+                        console.error(err);
                         alert('Terjadi kesalahan, coba lagi nanti.');
                     }
                 },
@@ -169,5 +279,4 @@
             });
         });
     </script>
-
 @endpush

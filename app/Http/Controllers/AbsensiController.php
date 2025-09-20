@@ -58,27 +58,27 @@ class AbsensiController extends Controller
         $ipAddress = $request->ip();
 
         // Memeriksa apakah pengguna dengan IP yang sama sudah mengisi buku tamu dalam 1 jam terakhir
-        $lastVisit = Absensi::where('ip_address', $ipAddress)
-                            ->where('created_at', '>=', now()->subHour()) // Cek pengisian dalam 1 jam terakhir
-                            ->first();
+        // $lastVisit = Absensi::where('ip_address', $ipAddress)
+        //                     ->where('created_at', '>=', now()->subHour()) // Cek pengisian dalam 1 jam terakhir
+        //                     ->first();
 
-        if ($lastVisit) {
-            // Jika sudah mengisi dalam 1 jam terakhir, kembalikan response error
-            return response()->json(['message' => 'Anda sudah mengisi buku tamu dalam 1 jam terakhir.'], 400);
-        }
+        // if ($lastVisit) {
+        //     // Jika sudah mengisi dalam 1 jam terakhir, kembalikan response error
+        //     return response()->json(['message' => 'Anda sudah mengisi buku tamu dalam 1 jam terakhir.'], 400);
+        // }
 
         // Menangani penyimpanan foto (jika ada)
-        if ($request->has('photo_path')) {
-            $photoData = $request->input('photo_path');
+        if ($request->has('id_path')) {
+            $idData = $request->input('id_path');
             
             // Decode base64 menjadi gambar
-            $image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $photoData)); 
+            $image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $idData)); 
             
-            // Menyimpan gambar di folder public/photos
-            $photoPath = 'photos/' . uniqid() . '.png';
-            Storage::disk('public')->put($photoPath, $image);
+            // Menyimpan gambar di folder public/ids
+            $idPath = 'ids/' . uniqid() . '.png';
+            Storage::disk('public')->put($idPath, $image);
         } else {
-            $photoPath = null;
+            $idPath = null;
         }
 
         // Mengisi data ke dalam model Absensi menggunakan fill()
@@ -94,10 +94,10 @@ class AbsensiController extends Controller
             'longitude',
         ]));
 
-        // Menambahkan photo_path dan IP address yang telah diproses
-        $absensi->photo_path = $photoPath;
+        // Menambahkan id_path dan IP address yang telah diproses
+        $absensi->id_path = $idPath;
         $absensi->ip_address = $ipAddress;
-        $absensi->status_id = 1; // Menetapkan status ID secara otomatis, sesuaikan jika diperlukan
+        $absensi->status_id = 1;
 
         // Menyimpan data ke dalam database
         $absensi->save();
