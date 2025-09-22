@@ -71,6 +71,8 @@
                             <label for="photo" class="form-label">Foto Identitas</label>
                             <div class="d-flex flex-column align-items-center">
                                 <div class="camera-container" style="position: relative; width: 100%; max-width: 480px;">
+                                    <img src="{{ asset('assets/img/illustrations/ktp.png') }}" alt="Panduan posisi KTP"
+                                        class="camera-placeholder">
                                     <video id="video" autoplay playsinline
                                         style="width: 100%; border-radius: 16px; background:#000;"></video>
                                     <img id="idPreview" class="camera-still" src="" alt="Preview Foto" />
@@ -79,17 +81,25 @@
                                         <div class="id-guide-text">Sesuaikan KTP Anda dengan bingkai dan pastikan terlihat
                                             jelas</div>
                                     </div>
+                                    <button type="button" id="switchCamera" class="camera-switch-btn"
+                                        aria-label="Balik kamera">
+                                        <img src="{{ asset('assets/img/icons/cam-rotate.png') }}" alt="Balik kamera" />
+                                    </button>
                                 </div>
-                                <button type="button" id="switchCamera" class="btn btn-outline-secondary btn-action">
-                                    <i class="ti ti-camera-rotate"></i>
-                                    <span class="ms-1">Balik kamera</span>
-                                </button>
+                                <div class="camera-actions">
+                                    <button type="button" id="uploadButton"
+                                        class="btn btn-outline-primary camera-upload-btn">
+                                        <i class="ti ti-upload"></i>
+                                        <span class="ms-1">Unggah Foto</span>
+                                    </button>
+                                </div>
                                 <hr class="w-100 my-4" />
                                 <button type="button" id="captureButton" class="btn btn-capture btn-action mt-0">
-                                    Ambil Foto
+                                    Mulai Kamera
                                 </button>
                             </div>
                             <input type="hidden" id="idInput" name="id_path" />
+                            <input type="file" id="idFileInput" accept="image/*" class="d-none" />
                         </div>
                         <input type="hidden" id="latitude" name="latitude" />
                         <input type="hidden" id="longitude" name="longitude" />
@@ -117,6 +127,15 @@
             object-fit: cover;
         }
 
+        .camera-placeholder {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
+            background: #f5f5f5;
+            padding: 16px;
+        }
+
         .camera-still {
             position: absolute;
             inset: 0;
@@ -125,12 +144,71 @@
             object-fit: cover;
             border-radius: 16px;
             display: none;
+            z-index: 2;
+        }
+
+        .camera-actions {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .camera-upload-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            gap: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .camera-upload-btn.upload-transparent {
+            background-color: transparent;
+            color: #0d6efd;
+            border-color: rgba(13, 110, 253, 0.5);
+            box-shadow: none;
+        }
+
+        .camera-switch-btn {
+            position: absolute;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            display: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(13, 110, 253, 0.35);
+            background-color: rgba(255, 255, 255, 0.12);
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .camera-switch-btn.is-visible {
+            display: inline-flex;
+        }
+
+        .camera-switch-btn img {
+            width: 22px;
+            height: 22px;
+        }
+
+        .camera-switch-btn:hover {
+            background-color: rgba(13, 110, 253, 0.2);
+            border-color: rgba(13, 110, 253, 0.5);
         }
 
         /* Overlay garis bantu untuk KTP (perkiraan rasio kartu 1.58:1) */
         .id-guide-overlay {
             position: absolute;
-            inset: 0;
+            inset: 0 0 60px 0;
             pointer-events: none;
             border-radius: 16px;
             z-index: 3;
@@ -145,7 +223,7 @@
             top: 50%;
             transform: translate(-50%, -50%);
             width: 86%;
-            height: 75%;
+            height: 90%;
         }
 
         .id-guide-overlay::before {

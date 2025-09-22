@@ -14,6 +14,28 @@ document.addEventListener("DOMContentLoaded", function () {
         const longitudeInput = document.getElementById('longitude');
         const overlay = document.querySelector('.id-guide-overlay');
         const container = document.querySelector('.camera-container');
+        const placeholderImage = document.querySelector('.camera-placeholder');
+        const uploadButton = document.getElementById('uploadButton');
+        const fileInput = document.getElementById('idFileInput');
+
+        if (video) {
+            video.style.display = 'none';
+        }
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        if (placeholderImage) {
+            placeholderImage.style.display = 'block';
+        }
+        if (captureButton) {
+            captureButton.textContent = 'Mulai Kamera';
+        }
+        if (switchCameraButton) {
+            switchCameraButton.classList.remove('is-visible');
+        }
+        if (uploadButton) {
+            uploadButton.classList.remove('upload-transparent');
+        }
 
         let streamStarted = false;
         let currentStream = null;
@@ -25,6 +47,62 @@ document.addEventListener("DOMContentLoaded", function () {
             if (currentStream) {
                 currentStream.getTracks().forEach(t => t.stop());
                 currentStream = null;
+            }
+            streamStarted = false;
+            if (placeholderImage && (!idPreview || idPreview.style.display !== 'block')) {
+                placeholderImage.style.display = 'block';
+            }
+            if (uploadButton) {
+                uploadButton.classList.remove('upload-transparent');
+            }
+            if (switchCameraButton) {
+                switchCameraButton.classList.remove('is-visible');
+            }
+        }
+
+        function setContainerHeightFromImage(imgEl) {
+            if (!container || !imgEl) return;
+            const cw = container.clientWidth;
+            if (!cw || !imgEl.naturalWidth || !imgEl.naturalHeight) return;
+            const ch = Math.round(cw * (imgEl.naturalHeight / imgEl.naturalWidth));
+            if (ch) {
+                container.style.height = ch + 'px';
+            }
+        }
+
+        function applyCapturedImage(dataUrl) {
+            if (!dataUrl) return;
+            if (idInput) {
+                idInput.value = dataUrl;
+            }
+            if (video) {
+                video.style.display = 'none';
+            }
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+
+            if (idPreview) {
+                const handlePreviewLoad = () => {
+                    setContainerHeightFromImage(idPreview);
+                    if (placeholderImage) {
+                        placeholderImage.style.display = 'none';
+                    }
+                    idPreview.style.display = 'block';
+                    idPreview.removeEventListener('load', handlePreviewLoad);
+                };
+
+                idPreview.addEventListener('load', handlePreviewLoad);
+                idPreview.src = dataUrl;
+
+                if (idPreview.complete && idPreview.naturalWidth) {
+                    handlePreviewLoad();
+                }
+            }
+
+            stopCurrentStream();
+            if (captureButton) {
+                captureButton.textContent = 'Ambil Ulang';
             }
         }
 
@@ -98,6 +176,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 video.style.display = 'block';
                 idPreview.style.display = 'none';
                 if (overlay) overlay.style.display = 'block';
+                if (placeholderImage) placeholderImage.style.display = 'none';
+                if (uploadButton) uploadButton.classList.add('upload-transparent');
+                if (switchCameraButton) switchCameraButton.classList.add('is-visible');
                 captureButton.textContent = 'Ambil Foto';
 
                 // Pastikan container mengikuti rasio video
@@ -111,6 +192,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             } catch (err) {
                 alert('Gagal mengakses kamera: ' + err.message);
+                if (placeholderImage && (!idPreview || idPreview.style.display !== 'block')) {
+                    placeholderImage.style.display = 'block';
+                }
+                if (uploadButton) {
+                    uploadButton.classList.remove('upload-transparent');
+                }
+                if (switchCameraButton) {
+                    switchCameraButton.classList.remove('is-visible');
+                }
             }
         }
 
@@ -143,14 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
                 const dataUrl = canvas.toDataURL('image/png');
-                idInput.value = dataUrl;
-
-                idPreview.src = dataUrl;
-                idPreview.style.display = 'block';
-                video.style.display = 'none';
-                if (overlay) overlay.style.display = 'none';
-
-                captureButton.textContent = 'Ambil Ulang';
+                applyCapturedImage(dataUrl);
             }
         });
 
@@ -162,8 +245,33 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Mulai kamera saat halaman siap agar preview langsung tampil
-        startCamera();
+        if (uploadButton && fileInput) {
+            uploadButton.addEventListener('click', function () {
+                fileInput.value = '';
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) return;
+
+                if (file.type && !file.type.startsWith('image/')) {
+                    alert('Silakan pilih file gambar.');
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const dataUrl = event.target && event.target.result;
+                    applyCapturedImage(dataUrl);
+                };
+                reader.onerror = function () {
+                    alert('Gagal membaca file, coba lagi.');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
         // Resize container saat ukuran viewport berubah
         window.addEventListener('resize', function () {
